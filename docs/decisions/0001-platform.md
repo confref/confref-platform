@@ -19,8 +19,7 @@ the project site, but recognisably not the project site.
   application in Python with the standard library (`apps/graph`, [0003](0003-application-and-index.md)); the labs
   site in Hugo (`site/`); showcases in repositories of their own, the first the map (`confref-map`).
 - **Data:** the stable versions of the datasets, from the dumps location of the data index (archive.confref.org).
-  All datasets are loaded into Fuseki unless `LOAD_SKIP` names some (springer-lod-chapters holds 19.6 of the
-  24 million triples).
+  All datasets are loaded into Fuseki (about 5 million triples) unless `LOAD_SKIP` names some.
 
 ## Consequences
 

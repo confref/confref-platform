@@ -52,7 +52,7 @@ PORTAL = B + "data/confref-portal/vocab/"
 RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 
 # datasets whose subjects are not ours and that are not needed for the index (they are in the SPARQL endpoint)
-SKIP_SUBJECTS = {"springer-lod-chapters", "springer-lod-2015", "tuwien-pc"}
+SKIP_SUBJECTS = {"springer-lod-2015", "tuwien-pc"}
 DATASET_TITLES = {}
 
 

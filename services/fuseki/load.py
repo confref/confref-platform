@@ -154,7 +154,7 @@ def main():
     ap.add_argument("--store", type=Path, default=Path("store"), help="local copy of the files")
     ap.add_argument("--fuseki", default="http://127.0.0.1:3031/confref", help="Fuseki dataset (writable)")
     ap.add_argument("--dry-run", action="store_true", help="only list the datasets and files")
-    ap.add_argument("--skip", default="", help="datasets not to load, separated by commas (e.g. springer-lod-chapters)")
+    ap.add_argument("--skip", default="", help="datasets not to load, separated by commas (e.g. springer-lod-2015)")
     args = ap.parse_args()
 
     index = read_index(args.index)
