@@ -6,17 +6,17 @@ Status: accepted · Date: 2026-11-09 · Builds on confref-data decision 0022
 
 Visitors of the landing pages and the labs see errors in the data: records grouped into the wrong series or event,
 two identifiers for one event, a wrong fact of a source. Most single facts come from sources that can be corrected
-where they are kept (ConfIDent, Wikidata); systematic errors of the linking and clustering are confref's own.
+where they are kept (ConfIDent, Wikidata, dblp, the GND); errors of the linking and clustering are confref's own.
 
 ## Decision
 
 - **A Feedback button in the labs header** (`/kit/1/header.html`), so every page that includes the header (SSI) has
   it, the landing pages and the showcases included, without changes of their own. The script `/kit/1/feedback.js`
   and the styles `/kit/1/feedback.css` come with the header; any element with `data-cr-feedback` opens the panel.
-- **Two steps:** the panel first says where feedback goes and what it is for: issues on confref-data are mainly about
-  systematic errors, in particular in the linking of records and their grouping into series and events; a wrong or
-  missing fact of a single record is best corrected at its source, in ConfIDent (where data on events can be added,
-  edited and discussed) or in Wikidata; www.confref.org/feedback/ says more. Then a form: the resource it is about,
+- **Two steps:** the panel first says where feedback goes: any feedback is welcome as an issue on confref-data, above
+  all on the linking of records and their grouping into series and events; an error in a record of a source is best
+  also corrected at the source (the ways to report to each source are on www.confref.org/feedback/); missing
+  conferences are added to ConfIDent, not to confref (confref-data 0022). Then a form: the resource it is about,
   the selected text (taken from what the visitor selects while the panel is open), the feedback, the subject, the
   page.
 - **The resource** is found on the page: the element with `data-cr-iri` around the selected text (the records of a

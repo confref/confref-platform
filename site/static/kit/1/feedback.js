@@ -12,7 +12,6 @@
   var CONTACT = "https://www.confref.org/legal/";
   var GUIDE = "https://www.confref.org/feedback/";
   var CONFIDENT = "https://www.confident-conference.org/index.php/ANNOUNCE";
-  var WIKIDATA = "https://www.wikidata.org/";
   var BASE = "https://id.confref.org/";
   var OURS = /^\/((series|event|data|datasets|ontology)\/.+?)(\.(html|ttl|jsonld|nt|rdf))?\/?$/;
   var MAX_QUOTE = 1500, MAX_URL = 7500;
@@ -75,12 +74,12 @@
     var intro = el("div", { class: "cr-fb-step", "data-step": "1" }, [
       el("p", { html: "Feedback on the data of confref goes to the public issue tracker of " +
         '<a href="' + REPO + '/issues"' + ext + ">confref-data</a> on GitHub, where it is answered and can be followed." }),
-      el("p", { text: "The issues are mainly about systematic errors, in particular in how confref links the records " +
-        "of its sources and groups them into series and events." }),
-      el("p", { html: "A wrong or missing fact of a single record is best corrected at its source: in " +
-        '<a href="' + CONFIDENT + '"' + ext + ">ConfIDent</a>, where data on events can be added, edited and " +
-        'discussed, or in <a href="' + WIKIDATA + '"' + ext + ">Wikidata</a>, where anyone can correct it. " +
-        'More on <a href="' + GUIDE + '"' + ext + ">www.confref.org/feedback/</a>." }),
+      el("p", { text: "Any feedback is welcome there, above all on how confref links the records of its sources and " +
+        "groups them into series and events." }),
+      el("p", { html: "An error in a record of a source is best also corrected at the source, so that it is right " +
+        "there too and reaches confref with the next harvest. The sources and how to report to them are listed on " +
+        '<a href="' + GUIDE + '"' + ext + ">www.confref.org/feedback/</a>. Missing conferences are not added in " +
+        'confref: add them to <a href="' + CONFIDENT + '"' + ext + ">ConfIDent</a>, and they reach confref from there." }),
       el("ol", {}, [
         el("li", { text: "Select on the page the text your feedback is about. You can do that while this panel is open; it is optional." }),
         el("li", { text: "Describe what is wrong and, if you know, what it should be." }),
