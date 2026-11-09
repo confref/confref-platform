@@ -5,7 +5,8 @@ confref-data (catalog/dataindex.json), with the corrections applied.
 - Datasets that are replaced by another (replaced_by) or withdrawn, and datasets without a stable version are left out.
 - Every dataset goes into its own named graph, graph IRI = dataset IRI (https://id.confref.org/datasets/<slug>);
   its description <slug>-meta.ttl.gz into <dataset IRI>/meta (kg-commons 0018).
-- Only the RDF files of a version are loaded (.ttl, .nt, .n3, gzipped or not); the deletions of the correction
+- Only the RDF files of a version are loaded (.ttl, .nt, .n3, gzipped or not); the tables (.tsv.gz: the members and
+  conflicts of the identifiers, the matches of the linksets) are only downloaded, for the index job; the deletions of the correction
   datasets (*.ru.gz, SPARQL Update) are run after all datasets are loaded.
 - Files are downloaded into STORE in the layout <slug>/<version>/<path> (the layout of every dumps location, kg-commons 0019),
   checked against the sha256 of the index, and not downloaded again. STORE can be served as a dumps location.
@@ -69,8 +70,11 @@ def plan(index):
     for slug, e in sorted(index["datasets"].items()):
         if e.get("replaced_by") or e.get("withdrawn") or not e.get("stable"):
             continue
-        v = next(v for v in e["versions"] if v["version"] == e["stable"])
-        files = [f for f in v["files"] if rdf_type(f["path"]) or f["path"].endswith(".ru.gz")]
+        v = next((v for v in e["versions"] if v["version"] == e["stable"]), None)
+        if v is None:                       # catalogued, but not on the dumps location (tuwien-pc)
+            print(f"{slug}: stable version {e['stable']} not on the dumps location, left out", file=sys.stderr)
+            continue
+        files = [f for f in v["files"] if rdf_type(f["path"]) or f["path"].endswith((".ru.gz", ".tsv.gz"))]
         out.append((slug, e["stable"], files))
     return out
 
@@ -175,6 +179,8 @@ def main():
             update(args.fuseki, f"DROP SILENT GRAPH <{graph}> ; DROP SILENT GRAPH <{graph}/meta>")
             for f in files:
                 local = fetch(args.store, base, slug, version, f)
+                if f["path"].endswith(".tsv.gz"):      # read by the index job, not loaded
+                    continue
                 if f["path"].endswith(".ru.gz"):
                     ru.append(local)
                     continue
