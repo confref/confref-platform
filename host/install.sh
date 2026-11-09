@@ -6,6 +6,10 @@
 #   sudo TLS=self-signed host/install.sh       (a local test VM, host/local-vm.yaml: no Let's Encrypt)
 #   sudo TLS=self-signed TLS_EXTRA=IP:<address> DATA_ON_ROOT=1 host/install.sh
 #                                              (a server not yet reachable by its names; /data on the root volume)
+#   sudo PROXY=<address> host/install.sh       (behind a reverse proxy that holds the public certificates, e.g. bart:
+#                                              http and https only from that address, the client address from its
+#                                              X-Forwarded-For; the VM keeps a self-signed certificate, which the
+#                                              proxy checks; README.md, 'Behind a proxy')
 # What it does: packages, Docker (storage on /data), firewall, directories under /data/confref, TLS certificates,
 # nginx. It does not load data or start services: see README.md (services/load.sh, docker compose).
 set -euo pipefail
@@ -13,7 +17,8 @@ set -euo pipefail
 HOSTS=(labs.confref.org id.confref.org)
 DATA=/data/confref
 DEPLOY_USER=${DEPLOY_USER:-${SUDO_USER:-}}
-TLS=${TLS:-letsencrypt}
+PROXY=${PROXY:-}
+TLS=${TLS:-$([ -n "$PROXY" ] && echo self-signed || echo letsencrypt)}
 REPO=$(cd "$(dirname "$0")/.." && pwd)
 [ "$(id -u)" = 0 ] || { echo "run with sudo"; exit 1; }
 [ -n "$DEPLOY_USER" ] || { echo "set DEPLOY_USER (the account that deploys)"; exit 1; }
@@ -42,9 +47,15 @@ if ! cmp -s "$REPO/host/docker-daemon.json" /etc/docker/daemon.json; then
   systemctl restart docker
 fi
 
-echo "== firewall: ssh, http, https only (containers publish on 127.0.0.1 only: Docker bypasses ufw)"
+echo "== firewall: ssh, http, https only${PROXY:+ (http and https from $PROXY only)} (containers publish on 127.0.0.1 only: Docker bypasses ufw)"
 ufw allow OpenSSH >/dev/null
-ufw allow 'Nginx Full' >/dev/null
+if [ -n "$PROXY" ]; then
+  ufw delete allow 'Nginx Full' >/dev/null 2>&1 || true
+  ufw allow from "$PROXY" to any app 'Nginx Full' >/dev/null
+else
+  ufw delete allow from "$(ufw status | sed -n "s/^Nginx Full .*ALLOW *\([0-9.]*\)$/\1/p" | head -1)" to any app 'Nginx Full' >/dev/null 2>&1 || true
+  ufw allow 'Nginx Full' >/dev/null
+fi
 ufw --force enable >/dev/null
 ufw status | head -8
 
@@ -77,6 +88,12 @@ fi
 echo "== nginx (labs is the default server; Ubuntu's default site is removed)"
 rm -f /etc/nginx/sites-enabled/default
 cp "$REPO/host/nginx/confref-labs.conf" /etc/nginx/sites-available/confref-labs.conf
+if [ -n "$PROXY" ]; then     # the client address in the logs and for the application: the proxy's X-Forwarded-For
+  printf '# written by host/install.sh (PROXY)\nset_real_ip_from %s;\nreal_ip_header X-Forwarded-For;\n' "$PROXY" \
+    > /etc/nginx/conf.d/confref-proxy.conf
+else
+  rm -f /etc/nginx/conf.d/confref-proxy.conf
+fi
 ln -sf /etc/nginx/sites-available/confref-labs.conf /etc/nginx/sites-enabled/confref-labs.conf
 nginx -t && systemctl reload nginx
 

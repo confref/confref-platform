@@ -22,6 +22,13 @@ project website is [confref-site](https://github.com/confref/confref-site) (www.
    Fuseki database, switches the endpoint to it, then `services/jobs.sh` (the index of the application, the map).
 3. From a checkout: `host/deploy.sh <ssh host>` builds the labs site and copies it.
 
+**Behind a proxy.** While the ports 80 and 443 of the VM are closed to the outside, bart (141.19.143.20, which serves
+www.confref.org) is its reverse proxy: DNS of labs and id points to bart, bart holds the Let's Encrypt certificate and
+passes the requests on to the VM over https, checked against the VM's self-signed certificate (the block in
+confref-site `deploy/nginx-confref.conf`). On the VM: `sudo PROXY=141.19.143.20 host/install.sh` (http and https only
+from bart, the client address from bart's X-Forwarded-For). Without the proxy again: `sudo host/install.sh`
+(Let's Encrypt on the VM, once its ports are open and DNS points to it).
+
 A local test VM (Lima, set up and loaded like the real VM): `host/local-vm.sh`, then https://localhost:8543/
 (self-signed certificate); after code changes `host/local-vm.sh update`. The test VM on bee (`host/bee-vm.yaml`)
 has the same address on bee.
