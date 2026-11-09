@@ -1,0 +1,58 @@
+/* The feedback panel (kit 1, decision 0008; script /kit/1/feedback.js). Prefixed cr-fb-, with its own fonts
+   and colours, so that it looks the same on top of any page. */
+.cr-fb {
+  --cr-fb-fg: #1d1d1f; --cr-fb-muted: #5b5b66; --cr-fb-line: #d8d8de; --cr-fb-bg: #ffffff; --cr-fb-accent: #17676a;
+  --cr-fb-field: #f6f6f8;
+  all: initial; box-sizing: border-box; position: fixed; right: 16px; top: 72px; z-index: 2000;
+  width: min(26rem, calc(100vw - 32px)); max-height: calc(100vh - 88px); overflow-y: auto;
+  background: var(--cr-fb-bg); color: var(--cr-fb-fg); border: 1px solid var(--cr-fb-line); border-radius: 10px;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, .22); padding: 14px 16px 16px;
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.cr-fb[hidden] { display: none; }
+@media (prefers-color-scheme: dark) {
+  .cr-fb { --cr-fb-fg: #e8e8ec; --cr-fb-muted: #a2a2ad; --cr-fb-line: #3a3a42; --cr-fb-bg: #1c1d22;
+           --cr-fb-accent: #66ccce; --cr-fb-field: #26272e; }
+}
+.cr-fb *, .cr-fb *::before, .cr-fb *::after { box-sizing: border-box; }
+.cr-fb p, .cr-fb ol, .cr-fb li, .cr-fb h2, .cr-fb label, .cr-fb details, .cr-fb summary {
+  font: inherit; color: inherit; letter-spacing: normal; text-transform: none; }
+.cr-fb p { margin: 0 0 8px; }
+.cr-fb ol { margin: 0 0 8px; padding-left: 1.3em; }
+.cr-fb li { margin: 0 0 4px; }
+.cr-fb a { color: var(--cr-fb-accent); text-decoration: underline; text-underline-offset: 2px; }
+.cr-fb-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.cr-fb h2 { margin: 0; font-size: 16px; font-weight: 600; }
+.cr-fb-close { all: unset; cursor: pointer; font-size: 22px; line-height: 1; padding: 0 4px; color: var(--cr-fb-muted); }
+.cr-fb-close:hover, .cr-fb-close:focus-visible { color: var(--cr-fb-fg); }
+.cr-fb-field { margin: 0 0 10px; }
+.cr-fb label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+.cr-fb input, .cr-fb textarea {
+  all: unset; box-sizing: border-box; display: block; width: 100%; padding: 6px 8px; background: var(--cr-fb-field);
+  border: 1px solid var(--cr-fb-line); border-radius: 6px; font: 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--cr-fb-fg); white-space: pre-wrap; overflow-wrap: anywhere; }
+.cr-fb textarea { resize: vertical; min-height: 3.2em; }
+.cr-fb input[readonly], .cr-fb textarea[readonly] { color: var(--cr-fb-muted); }
+.cr-fb input:focus-visible, .cr-fb textarea:focus-visible { outline: 2px solid var(--cr-fb-accent); outline-offset: 1px; }
+.cr-fb-hint { color: var(--cr-fb-muted); font-size: 12px; margin: 3px 0 0 !important; }
+.cr-fb-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 6px; }
+.cr-fb-primary, .cr-fb-secondary {
+  all: unset; box-sizing: border-box; display: inline-block; cursor: pointer; padding: 7px 12px; border-radius: 6px;
+  font: 600 13px/1.3 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none !important; }
+.cr-fb-primary { background: var(--cr-fb-accent); color: var(--cr-fb-bg) !important; }
+.cr-fb-primary[aria-disabled=true] { opacity: .45; cursor: not-allowed; }
+.cr-fb-secondary { border: 1px solid var(--cr-fb-line); color: var(--cr-fb-fg); }
+.cr-fb-primary:focus-visible, .cr-fb-secondary:focus-visible { outline: 2px solid var(--cr-fb-accent); outline-offset: 2px; }
+.cr-fb-status { color: var(--cr-fb-muted); font-size: 12px; min-height: 1em; }
+.cr-fb-more summary { cursor: pointer; color: var(--cr-fb-muted); font-size: 13px; margin: 4px 0; }
+.cr-fb-more textarea { margin-top: 4px; }
+@media (max-width: 560px) {
+  .cr-fb { right: 0; top: auto; bottom: 0; width: 100vw; max-height: 85vh; border-radius: 10px 10px 0 0; }
+}
+/* the button in the labs header (desktop navigation and the menu) */
+.labs-header .feedback-button { all: unset; box-sizing: border-box; display: block; cursor: pointer; padding: .55rem .75rem;
+  border-radius: 8px; font: inherit; font-weight: 600; color: var(--labs-bar-ink); }
+.labs-header .nav .feedback-button:hover { background: rgb(255 255 255 / .08); color: #fff; }
+.labs-header .menu .feedback-button { color: var(--ink); }
+.labs-header .menu .feedback-button:hover { background: var(--bg-soft); }
+.labs-header .feedback-button:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }

@@ -427,7 +427,7 @@ def build(db_path):
             for s, pr, o in read_triples(meta):
                 if isinstance(s, IRI):
                     subj[str(s)].append(nt_line(s, pr, o))
-    onto = ontology_triples()
+    onto = ontology_triples(files)
     for s, pr, o in onto:
         if isinstance(s, IRI):
             subj[str(s)].append(nt_line(s, pr, o))
@@ -467,7 +467,10 @@ def nt_line(s, p, o):
     return f"{nt(s)} {nt(IRI(p))} {nt(o)} ."
 
 
-def ontology_triples():
+def ontology_triples(files):
+    """The ontology: the stable version of the dataset confref-ontology in the store; without it CR_ONTOLOGY_TTL."""
+    if "confref-ontology" in files:
+        return [t for p in files["confref-ontology"][1] for t in read_triples(p)]
     src = config.ONTOLOGY_TTL
     try:
         if re.match(r"https?://", src):

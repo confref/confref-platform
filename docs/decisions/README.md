@@ -11,3 +11,4 @@ One file per decision, numbered in order. A decision is changed by a new record 
 | [0005](0005-apis.md) | APIs: lookup, search, entity, reconciliation, calendars | accepted | 2026-11-09 |
 | [0006](0006-labs-design.md) | The design of the labs: the project site's, set apart, everything in beta | accepted | 2026-11-09 |
 | [0007](0007-map.md) | The map as a showcase of its own (confref-map) | accepted | 2026-11-09 |
+| [0008](0008-feedback.md) | Feedback: a button in the labs header prepares an issue on confref-data (systematic errors); single facts at their source | accepted | 2026-11-09 |

@@ -103,7 +103,7 @@ def sources_html(members):
             s = f'<a href="{esc(h)}">{iri}</a>' if h else iri
             if m.get("page"):
                 s += f' · <a href="{esc(m["page"])}">page</a>'
-            items.append(f"<li>{s}</li>")
+            items.append(f'<li data-cr-iri="{esc(m["iri"])}">{s}</li>')
         name = SOURCES.get(ds, ds)
         rows.append(f'<tr><th><a href="{esc(local(B + "datasets/" + ds))}">{esc(name)}</a></th><td><ul class="plain">'
                     + "".join(items) + "</ul></td></tr>")
@@ -268,7 +268,7 @@ def editions_html(sid):
         if r["place"] and r["country"]:
             pass
         alt = json.loads(r["alt"])
-        trs.append(f'<tr><td>{esc(str(r["year"] or ""))}</td><td>{esc(str(r["edition"] or ""))}</td>'
+        trs.append(f'<tr data-cr-iri="{esc(B + "event/" + r["id"])}"><td>{esc(str(r["year"] or ""))}</td><td>{esc(str(r["edition"] or ""))}</td>'
                    f'<td>{link(B + "event/" + r["id"], r["label"])}<div class="muted small">{esc(", ".join(alt))}</div></td>'
                    f'<td>{esc(pl)}</td><td class="muted small">{esc(fmt_date(r["start"], r["end"]))}</td></tr>')
     return (f'<section class="block"><h2>Events ({num(len(rows))})</h2>{bars}<div class="table-wrap"><table class="list">'
@@ -320,7 +320,15 @@ def record(iri, triples):
         kind = "series" if m["id"][0] == "s" else "event"
         ident = (f'<p class="callout">This record is part of the confref {kind} '
                  f'{link(B + kind + "/" + m["id"], entity_label(m["id"]))}.</p>')
-    body = (f'<section class="entity-head"><div class="wrap"><p class="eyebrow">Record <span class="beta">Beta</span></p>'
+    eyebrow = "Record"
+    if iri.startswith(config.ONTOLOGY) and iri != config.ONTOLOGY:
+        eyebrow = "Ontology term"
+        term = iri[len(config.ONTOLOGY):]
+        ident = (f'<p class="callout">Documented in {link(config.WWW + "/ontology/#" + term, "the confref ontology")}'
+                 f' on www.confref.org.</p>')
+    elif iri.startswith(B + "datasets/vocabulary/"):
+        eyebrow = "Dataset vocabulary"
+    body = (f'<section class="entity-head"><div class="wrap"><p class="eyebrow">{eyebrow} <span class="beta">Beta</span></p>'
             f'<h1>{esc(title)}</h1><p><code class="ident">{esc(iri)}</code></p>{ident}</div></section>'
             f'<div class="wrap entity-body"><section class="block"><div class="table-wrap"><table class="triples">'
             + "".join(rows) + f"</table></div>{formats_block(local(iri))}</section>{beta_note()}</div>")

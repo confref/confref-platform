@@ -18,9 +18,12 @@ redirects (2026-11-09).
   into (for documents: the document of the same format); a split one `300 Multiple Choices` with its parts; a retired
   one `410 Gone` with its history.
 - **Datasets** (`datasets/<slug>`, versions, metadata graphs): HTML is their page in the catalogue on www.confref.org
-  (303); RDF comes from their `-meta` graphs. **Files** (`dumps/<slug>/<version>/<path>`) answer `302` with their
-  address on the dumps location. **The ontology** (`ontology/`) goes to `ontology/index.<suffix>`; its terms to
-  `ontology/<term>.<suffix>`. **`/`** goes to the page about the identifiers on www.confref.org.
+  (303); RDF comes from their `-meta` graphs. The concepts of the dataset vocabulary (`datasets/vocabulary/…`, the
+  dataset `confref-vocabulary`) are shown on the platform like records. **Files** (`dumps/<slug>/<version>/<path>`)
+  answer `302` with their address on the dumps location. **The ontology** (`ontology/`): HTML is its page on
+  www.confref.org (`/ontology/`, 303), RDF `ontology/index.<suffix>`; its terms go to `ontology/<term>.<suffix>`,
+  and the HTML of a term links its section on that page (`/ontology/#<term>`). The ontology is read from the stable
+  version of the dataset `confref-ontology`. **`/`** goes to the page about the identifiers on www.confref.org.
 - The same paths are answered on labs.confref.org; the pages name the address on id.confref.org as canonical.
 
 ## Consequences

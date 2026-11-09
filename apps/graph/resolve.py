@@ -2,13 +2,14 @@
 
 - A resource IRI (series/<id>, event/<id>, data/…, datasets/…, ontology/…) answers 303 See Other to a document about
   it, chosen by the Accept header: <IRI>.html (the landing page or the record view), .ttl, .jsonld, .nt or .rdf.
-  The ontology itself (ontology/) goes to ontology/index.<suffix>.
+  The ontology itself (ontology/) goes to its page on www.confref.org (HTML) or to ontology/index.<suffix> (RDF);
+  the HTML page of a term links its section on that page.
 - A document answers 200 with the triples whose subject is the resource (RDF), or the page about it (HTML).
 - A merged identifier answers 301 Moved Permanently to the identifier it was merged into (resource or document of
   the same format); a split one 300 Multiple Choices (HTML: its parts; RDF: its history); a retired one 410 Gone
   (with its history).
 - Datasets and their versions: HTML goes to their page in the catalogue on www.confref.org (303); RDF from their
-  -meta graphs. Files of a version (dumps/<slug>/<version>/<path>) go to the dumps location (302).
+  -meta graphs. The concepts of the dataset vocabulary (datasets/vocabulary/…) are shown like records. Files of a version (dumps/<slug>/<version>/<path>) go to the dumps location (302).
 - / goes to the page about the identifiers on www.confref.org.
 """
 
@@ -39,9 +40,13 @@ def resolve(path, accept, query=""):
         return redirect(302, config.ARCHIVE + path[len("dumps/"):])
     if path in ("ontology", "ontology/"):
         fmt = negotiate(accept)
+        if fmt == "html":
+            return redirect(303, config.WWW + "/ontology/", vary=True)
         return redirect(303, f"{config.ID}/ontology/index.{fmt}", vary=True)
     m = SUFFIX.match(path)
     if m and m.group(1) == "ontology/index":
+        if m.group(2) == "html":
+            return redirect(303, config.WWW + "/ontology/")
         return ontology_doc(m.group(2))
     if m and known(m.group(1)):
         return document(m.group(1), m.group(2))
@@ -50,7 +55,7 @@ def resolve(path, accept, query=""):
         state = former_state(path)
         if state and state["kind"] == "merged":
             return redirect(301, f"{config.ID}/{path.split('/')[0]}/{json.loads(state['targets'])[0]}")
-        if path.startswith("datasets/") and fmt == "html":
+        if catalogued(path) and fmt == "html":
             return redirect(303, catalogue_page(path), vary=True)
         return redirect(303, f"{config.ID}/{path}.{fmt}", vary=True)
     return not_found(path)
@@ -75,6 +80,12 @@ def former_state(path):
     return db().execute("SELECT * FROM history WHERE id = ?", (ident,)).fetchone()
 
 
+def catalogued(path):
+    """Datasets and their versions have their page in the catalogue on www.confref.org; the concepts of the dataset
+    vocabulary (datasets/vocabulary/<field>/<value>, the dataset confref-vocabulary) are shown here like records."""
+    return path.startswith("datasets/") and not path.startswith("datasets/vocabulary/")
+
+
 def catalogue_page(path):
     parts = path.split("/")
     slug = parts[1]
@@ -96,7 +107,7 @@ def document(path, fmt):
     elif state and state["kind"] == "split":
         status = 300
     if fmt == "html":
-        if path.startswith("datasets/"):
+        if catalogued(path):
             return redirect(303, catalogue_page(path))
         if state:
             body = pages.former(kind, ident, state)
@@ -116,15 +127,7 @@ def pages_response(status, body):
 
 
 def ontology_doc(fmt):
+    """The ontology as RDF (all triples of its terms); its HTML is the page on www.confref.org."""
     rows = db().execute("SELECT iri FROM subject WHERE iri LIKE ?", (config.ONTOLOGY + "%",)).fetchall()
     triples = [t for r in rows for t in triples_of(r["iri"])]
-    if fmt == "html":
-        terms = sorted(r["iri"] for r in rows if r["iri"] != config.ONTOLOGY)
-        items = "".join(f'<li>{pages.link(t, "cr:" + t[len(config.ONTOLOGY):])} {pages.esc(pages.label(t) or "")}</li>'
-                        for t in terms)
-        body = (f'<section><div class="wrap prose"><p class="eyebrow">Ontology <span class="beta">Beta</span></p>'
-                f'<h1>The confref ontology</h1><p>Namespace <code>{config.ONTOLOGY}</code> (prefix <code>cr:</code>). '
-                f'The ontology is documented in <a href="https://github.com/confref/confref-ontology/blob/main/confref-ontology.md">'
-                f'confref-ontology</a>; its terms:</p><ul>{items}</ul>{pages.formats_block(config.ID + "/ontology/index")}</div></section>')
-        return pages_response(200, pages.page("Ontology", body, area="id"))
     return rdf_response(triples, fmt, comment="the confref ontology, https://id.confref.org/ontology/")
