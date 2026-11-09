@@ -1,0 +1,29 @@
+# A local test VM for the platform (Lima on macOS): Ubuntu Server 26.04 LTS, set up with host/install.sh like
+# the real VM. The site is then at https://localhost (self-signed certificate).
+#   limactl start --name=confref host/local-vm.yaml
+#   limactl shell confref            # a shell in the VM;  limactl stop|delete confref
+# Only this repository and confref-map are visible in the VM (read-only, at the same paths); they are copied to
+# /data/confref/src there.
+minimumLimaVersion: 2.0.0
+base: template:_images/ubuntu-26.04
+vmType: vz
+cpus: 4
+memory: 16GiB
+disk: 100GiB
+mounts:
+  - location: "~/sync/projekte/confref/confref-platform"   # this repository; adjust to your checkout
+    writable: false
+  - location: "~/sync/projekte/confref/confref-map"        # the map, built on the VM (services/jobs.sh)
+    writable: false
+containerd:
+  system: false
+  user: false
+portForwards:
+  - guestPort: 80
+    hostIP: 127.0.0.1
+    hostPort: 80
+  - guestPort: 443
+    hostIP: 127.0.0.1
+    hostPort: 443
+  - guestPortRange: [1, 65535]       # nothing else of the VM is reachable from the Mac
+    ignore: true

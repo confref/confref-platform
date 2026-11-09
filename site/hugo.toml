@@ -1,0 +1,15 @@
+# The labs site (labs.confref.org): home, about, APIs, SPARQL editor, and the kit that the platform's pages and the
+# showcases include (/kit/1/header.html, /kit/1/footer.html, /kit/1/confref.css). Build: ./build.sh
+baseURL = "https://labs.confref.org/"
+languageCode = "en"
+title = "confref labs"
+disableKinds = ["taxonomy", "term", "RSS", "sitemap"]
+
+[params]
+www = "https://www.confref.org/"
+id = "https://id.confref.org/"
+github = "https://github.com/confref"
+description = "Services on the confref identifiers of academic conferences: search, map, SPARQL and APIs. In beta."
+
+[markup.goldmark.renderer]
+unsafe = true

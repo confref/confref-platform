@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 31 88 86" role="img" aria-label="confref">
+  <!-- The "cr" mark of portal.confref.org (2019, designed for the Catalyst Grant), redrawn from its PNG:
+       a three-quarter ring (teal), and an r (red) made of a quarter ring of the same size, centred one ring width
+       to the right, and a stem that runs from the top into the hole of the ring, kept clear of it by a gap. -->
+  <defs>
+    <clipPath id="cr-stem"><path d="M-10 20H100V74H-10Z"/><circle cx="41" cy="74" r="20.6"/></clipPath>
+  </defs>
+  <path fill="none" stroke="#66ccce" stroke-width="18.2" d="M73.8 74A32.8 32.8 0 1 1 41 41.2"/>
+  <path fill="none" stroke="#f03554" stroke-width="18.2" d="M52.7 74A32.8 32.8 0 0 1 85.5 41.2"/>
+  <rect clip-path="url(#cr-stem)" x="43.6" y="32.1" width="18.2" height="62.6" fill="#f03554"/>
+</svg>

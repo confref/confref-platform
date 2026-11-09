@@ -1,0 +1,31 @@
+# The Fuseki services of labs.confref.org: one TDB2 dataset, read-only, two services on it.
+# - confref: the public one (nginx passes /sparql to /confref/query); queries stop after 120 s.
+# - internal: no time limit, for the platform's own jobs and for showcase containers; reachable only on 127.0.0.1
+#   and the Docker network confref, never through nginx.
+# No update, upload or admin endpoints. The database is built by the loader (load.py) in a separate, writable server.
+
+PREFIX fuseki: <http://jena.apache.org/fuseki#>
+PREFIX ja:     <http://jena.hpl.hp.com/2005/11/Assembler#>
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX tdb2:   <http://jena.apache.org/2016/tdb#>
+
+[] rdf:type fuseki:Server .
+
+<#public> rdf:type fuseki:Service ;
+    fuseki:name "confref" ;
+    fuseki:endpoint [ fuseki:operation fuseki:query ; fuseki:name "query" ; ja:context <#timeout> ] ;
+    fuseki:endpoint [ fuseki:operation fuseki:query ; fuseki:name "sparql" ; ja:context <#timeout> ] ;
+    fuseki:dataset <#dataset> .
+
+# milliseconds: until the first result, and in total
+<#timeout> ja:cxtName "arq:queryTimeout" ; ja:cxtValue "30000,120000" .
+
+<#internal> rdf:type fuseki:Service ;
+    fuseki:name "internal" ;
+    fuseki:endpoint [ fuseki:operation fuseki:query ; fuseki:name "query" ] ;
+    fuseki:dataset <#dataset> .
+
+# Without GRAPH a query sees the union of all graphs.
+<#dataset> rdf:type tdb2:DatasetTDB2 ;
+    tdb2:location "/fuseki/database" ;
+    tdb2:unionDefaultGraph true .

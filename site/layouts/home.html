@@ -1,0 +1,33 @@
+{{ define "main" }}
+<section class="hero"><div class="wrap">
+  <span class="badge">Beta · services in development</span>
+  <h1>confref labs</h1>
+  <p class="lead">Services on the confref identifiers of conference series and events: a search, a map, a SPARQL endpoint
+    and APIs. The identifiers are stable. The services, their pages and their interfaces can still change.</p>
+  <form class="searchbox" method="get" action="{{ "/search/" | absURL }}" role="search" style="max-width:40rem">
+    <input type="search" name="q" placeholder="Name, acronym, place or year: ISWC 2020" aria-label="Search">
+    <button class="button primary">Search</button>
+  </form>
+</div></section>
+<section class="soft"><div class="wrap">
+  <p class="eyebrow">Services</p>
+  <div class="grid three">
+    {{ range .Params.services }}
+    <a class="card" href="{{ .url | absURL }}"><h3>{{ .title }} <span class="beta">Beta</span></h3><p>{{ .text }}</p></a>
+    {{ end }}
+  </div>
+</div></section>
+<section><div class="wrap">
+  <div class="grid two">
+    <div><p class="eyebrow">Identifiers</p><h2>id.confref.org</h2>
+      <p>Every series and every event has an identifier, <code>https://id.confref.org/event/&lt;id&gt;</code>. It
+        resolves to its landing page for people and to its data for programs (content negotiation with 303
+        redirects). The landing pages are part of the labs.</p>
+      <p><a href="{{ site.Params.www }}identifiers/">How the identifiers are made</a></p></div>
+    <div><p class="eyebrow">Data</p><h2>What is loaded</h2>
+      <p>The stable versions of the confref datasets: the identifier set, the records of the sources, the linksets,
+        places, fields and ratings. The <a href="{{ "/dashboard/" | absURL }}">dashboard</a> shows what they cover;
+        the datasets and their dumps are listed on <a href="{{ site.Params.www }}datasets/">www.confref.org</a>.</p></div>
+  </div>
+</div></section>
+{{ end }}

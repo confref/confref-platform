@@ -1,0 +1,1 @@
+YASGUI 4.6.2 (@zazuko/yasgui, MIT licence), build/yasgui.min.js and build/yasgui.min.css from npm via jsdelivr, 2026-10-14.

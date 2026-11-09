@@ -1,0 +1,11 @@
+{{- /* the kit header: the beta line and the dark labs header; included by nginx (SSI) into every page of the platform */ -}}
+<div class="labs-beta"><div class="wrap"><span class="beta">Beta</span><span>confref labs: services in development; they can change or be unavailable. The project site is <a href="{{ site.Params.www }}">www.confref.org</a>.</span></div></div>
+<header class="site-header labs-header">
+  <div class="wrap">
+    <a class="brand" href="{{ "/" | absURL }}" aria-label="confref labs, home"><img src="/kit/1/confref-mark.svg" alt="" width="34" height="34"><span class="wordmark">conf<span class="ref">ref</span></span><span class="labs-pill">labs</span></a>
+    <nav class="nav" aria-label="Labs">{{ partial "menu-items.html" . }}</nav>
+    <details class="menu"><summary aria-label="Menu">Menu</summary>
+      <nav aria-label="Labs (mobile)">{{ partial "menu-items.html" . }}</nav>
+    </details>
+  </div>
+</header>

@@ -1,0 +1,72 @@
+# The services of labs.confref.org. Run in this directory: docker compose up -d
+# Settings in .env (see .env.example); the current database is FUSEKI_DB, set by load.sh.
+# Nothing here is published beyond 127.0.0.1: nginx on the host is the only public entry (../host/nginx/).
+name: confref
+
+services:
+  # the public SPARQL endpoint, read-only (fuseki/config.ttl); nginx passes /sparql to /confref/query
+  fuseki:
+    build: ./fuseki
+    image: confref/fuseki:6.2.0
+    restart: unless-stopped
+    command: ["--conf", "/fuseki/config.ttl"]
+    environment:
+      JAVA_OPTS: "-Xmx${FUSEKI_HEAP:-8g}"
+    volumes:
+      - ./fuseki/config.ttl:/fuseki/config.ttl:ro
+      - type: bind                   # never create a missing database directory: fail instead
+        source: ${FUSEKI_DB:?set FUSEKI_DB in .env (load.sh does)}
+        target: /fuseki/database
+        bind: { create_host_path: false }
+    ports:
+      - "127.0.0.1:3030:3030"
+    networks: [confref]
+
+  # builds a new database over HTTP (load.sh); never public, stopped after loading
+  fuseki-load:
+    image: confref/fuseki:6.2.0
+    profiles: [load]
+    command: ["--update", "--loc", "/fuseki/database", "/confref"]
+    environment:
+      JAVA_OPTS: "-Xmx${FUSEKI_HEAP:-8g}"
+    volumes:
+      - type: bind
+        source: ${FUSEKI_LOAD_DB:-/nonexistent}
+        target: /fuseki/database
+        bind: { create_host_path: false }
+    ports:
+      - "127.0.0.1:3031:3030"
+
+  # the platform's application (../apps/graph): the documents of id.confref.org, search, APIs, reconciliation,
+  # calendars, dashboard; reads the index made by its job (jobs.sh) from the store
+  graph:
+    build: ../apps/graph
+    image: confref/graph:latest
+    restart: unless-stopped
+    environment:
+      CR_DB: /generated/confref.sqlite
+      CR_GENERATED: /generated
+      CR_STORE: /store
+      CR_SPARQL: http://fuseki:3030/internal/query
+      CR_ID_BASE: ${CR_ID_BASE:-https://id.confref.org}
+      CR_LABS_BASE: ${CR_LABS_BASE:-https://labs.confref.org}
+    volumes:
+      - type: bind
+        source: ${DATA:-/data/confref}/www/generated
+        target: /generated
+        bind: { create_host_path: false }
+      - type: bind
+        source: ${DATA:-/data/confref}/store
+        target: /store
+        read_only: true
+        bind: { create_host_path: false }
+    ports:
+      - "127.0.0.1:8090:8090"
+    read_only: true
+    tmpfs: [/tmp]
+    networks: [confref]
+
+# showcases with a server join this network: http://fuseki:3030/internal/query
+networks:
+  confref:
+    name: confref

@@ -1,0 +1,27 @@
+{{ define "head" }}
+<link rel="stylesheet" href="/kit/vendor/yasgui-4.6.2/yasgui.min.css">
+<style>#yasgui { margin-top: 12px; } .yasgui .autocompleteWrapper { display: none !important; }</style>
+{{ end }}
+{{ define "main" }}
+<section class="page-head"><div class="wrap">
+  <p class="eyebrow">SPARQL <span class="beta">Beta</span></p>
+  <h1>SPARQL</h1>
+  <p class="lead">The stable versions of the confref datasets, one named graph per dataset; without <code>GRAPH</code> a
+    query sees all of them. Endpoint for programs: <code>https://labs.confref.org/sparql</code>. Queries stop after
+    120 seconds.</p>
+</div></section>
+<div class="wrap" style="padding-bottom:3rem">
+<div id="yasgui"></div>
+</div>
+<script src="/kit/vendor/yasgui-4.6.2/yasgui.min.js"></script>
+<script>
+  Yasgui.Yasqe.defaults.value = {{ .Params.example }};
+  const yasgui = new Yasgui(document.getElementById("yasgui"), {
+    requestConfig: { endpoint: location.origin + "/sparql", method: "POST" },
+    copyEndpointOnNewTab: true, showEndpointButton: false, persistenceId: "confref-labs"
+  });
+  // /sparql/?query=… (links from the landing pages) opens the query in a new tab
+  const shared = new URLSearchParams(location.search.slice(1)).get("query");
+  if (shared) { yasgui.addTab(true, { name: "Linked query" }).setQuery(shared); history.replaceState(null, "", location.pathname); }
+</script>
+{{ end }}
