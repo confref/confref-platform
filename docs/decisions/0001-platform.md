@@ -11,7 +11,7 @@ the project site, but recognisably not the project site.
 
 ## Decision
 
-- **One VM** (Ubuntu LTS, 4 cores, 16 GB, 100 GB), set up from this repository (`host/install.sh`); a local Lima VM
+- **One VM** (Ubuntu LTS, 4 cores, 16 GB RAM, 32 GB system disk, 100 GB data disk for `/data`), set up from this repository (`host/install.sh`); a local Lima VM
   (`host/local-vm.yaml`) for tests. nginx is the only public entry; the services listen on 127.0.0.1.
 - **Hosts:** `labs.confref.org` (the labs site, the map, SPARQL, the application) and `id.confref.org` (every path
   to the application, which resolves the IRIs: [0002](0002-dereferencing.md)).
@@ -19,7 +19,11 @@ the project site, but recognisably not the project site.
   application in Python with the standard library (`apps/graph`, [0003](0003-application-and-index.md)); the labs
   site in Hugo (`site/`); showcases in repositories of their own, the first the map (`confref-map`).
 - **Data:** the stable versions of the datasets, from the dumps location of the data index (archive.confref.org).
-  All datasets are loaded into Fuseki (about 5 million triples) unless `LOAD_SKIP` names some.
+  All datasets are loaded into Fuseki unless `LOAD_SKIP` names some. Measured on the test VM on bee (2026-11-09): 6.9
+  million triples, a database of 2.5 GB (3.9 GB before compacting), Fuseki using 0.7 GB of memory, the index of the
+  application 0.4 GB, everything on the VM 7 GB of disk.
+- **Loads on bee:** new data is loaded and checked on a test VM on bee (`host/bee-vm.yaml`) and its state copied to the
+  VM, as for the other platform of kg-commons.
 
 ## Consequences
 
