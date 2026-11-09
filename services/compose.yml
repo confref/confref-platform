@@ -50,6 +50,9 @@ services:
       CR_SPARQL: http://fuseki:3030/internal/query
       CR_ID_BASE: ${CR_ID_BASE:-https://id.confref.org}
       CR_LABS_BASE: ${CR_LABS_BASE:-https://labs.confref.org}
+      # a test VM with versions not yet published: a data index and the ontology in the store (host/catalog-dataindex.py)
+      CR_DATAINDEX: ${CR_DATAINDEX:-https://raw.githubusercontent.com/confref/confref-data/main/catalog/dataindex.json}
+      CR_ONTOLOGY_TTL: ${CR_ONTOLOGY_TTL:-https://raw.githubusercontent.com/confref/confref-ontology/main/confref-ontology.ttl}
     volumes:
       - type: bind
         source: ${DATA:-/data/confref}/www/generated
