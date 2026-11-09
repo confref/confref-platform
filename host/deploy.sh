@@ -9,7 +9,9 @@ host=${1:?ssh host}; base=${2:-}
 ssh_cmd=ssh
 lima_cfg=~/.lima/${host#lima-}/ssh.config
 [[ $host == lima-* && -f $lima_cfg ]] && ssh_cmd="ssh -F $lima_cfg"
-"$REPO/site/build.sh" ${base:+"$base"}
-chmod -R a+rX "$REPO/site/public"
-rsync -a --delete --exclude map/ -e "$ssh_cmd" "$REPO/site/public/" "$host:/data/confref/www/site/"
+out=$(mktemp -d)                  # built apart from site/public, which stays as it is
+trap 'rm -rf "$out"' EXIT
+"$REPO/site/build.sh" "$base" "$out"
+chmod -R a+rX "$out"
+rsync -a --delete --exclude map/ -e "$ssh_cmd" "$out/" "$host:/data/confref/www/site/"
 echo "copied to $host:/data/confref/www/site/"

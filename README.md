@@ -22,9 +22,9 @@ project website is [confref-site](https://github.com/confref/confref-site) (www.
    Fuseki database, switches the endpoint to it, then `services/jobs.sh` (the index of the application, the map).
 3. From a checkout: `host/deploy.sh <ssh host>` builds the labs site and copies it.
 
-A local test VM: `limactl start --name=confref host/local-vm.yaml`, then in the VM steps 1 and 2 with
-`CR_ID_BASE=https://localhost` and `CR_LABS_BASE=https://localhost` in `services/.env`, and
-`host/deploy.sh lima-confref https://localhost/`.
+A local test VM (Lima, set up and loaded like the real VM): `host/local-vm.sh`, then https://localhost:8543/
+(self-signed certificate); after code changes `host/local-vm.sh update`. The test VM on bee (`host/bee-vm.yaml`)
+has the same address on bee.
 
 ## Without a VM
 

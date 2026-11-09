@@ -1,5 +1,7 @@
 # A local test VM for the platform (Lima on macOS): Ubuntu Server 26.04 LTS, set up with host/install.sh like
-# the real VM. The site is then at https://localhost (self-signed certificate).
+# the real VM. The site is then at https://localhost:8543 (self-signed certificate), the same address as the test
+# VM on bee (host/bee-vm.yaml), so one test build of the site fits both; ports 80 and 443 stay free for other VMs.
+#   host/local-vm.sh                 # creates, installs and loads it (see there)
 #   limactl start --name=confref host/local-vm.yaml
 #   limactl shell confref            # a shell in the VM;  limactl stop|delete confref
 # Only this repository and confref-map are visible in the VM (read-only, at the same paths); they are copied to
@@ -21,9 +23,9 @@ containerd:
 portForwards:
   - guestPort: 80
     hostIP: 127.0.0.1
-    hostPort: 80
+    hostPort: 8180
   - guestPort: 443
     hostIP: 127.0.0.1
-    hostPort: 443
+    hostPort: 8543
   - guestPortRange: [1, 65535]       # nothing else of the VM is reachable from the Mac
     ignore: true
